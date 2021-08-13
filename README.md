@@ -1,7 +1,7 @@
 # Cedar Grove Indoor Air Quality Monitor
 
 ### _A portable PyBadge indoor CO2 montor._
-![Image of Module](https://github.com/CedarGroveStudios/Thermal_Camera/blob/master/photos%20and%20graphics/DSC05948_comp_wide.jpg)
+![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/master/photos_and_graphics/IMG_0719.jpg)
 
 ## Overview
 
@@ -10,14 +10,14 @@ The Indoor Air Quality Monitor is a portable SCD-30-based ambient CO2 measuremen
 This implementation uses the Adafruit Adafruit SCD-30 - NDIR CO2 Temperature and Humidity Sensor breakout (https://www.adafruit.com/product/4867).
 
 
-![Image of Module](https://github.com/CedarGroveStudios/Thermal_Camera/blob/master/photos%20and%20graphics/DSC05961a_wide.jpg)
+![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/master/photos_and_graphics/DSC05961a_wide.jpg)
 
 
 ## Project Description
 
 ...
 
-The Indoor Air Quality Monitor utilizes four PyBadge-stored files for operation:
+The Indoor Air Quality Monitor utilizes a number of PyBadge-stored files and conversion helpers in order to operate:
 *  co2_monitor.py (renamed to code.py), the primary code module, version 1.0, stored in the root directory
 *  c02_mon_config.py, a Python-formatted list of default operating parameters in text file format, stored in the root directory
 *  Two fonts stored in the fonts folder
@@ -42,4 +42,4 @@ Optional:
 
 
 
-![Image of Module](https://github.com/CedarGroveStudios/Thermal_Camera/blob/master/photos%20and%20graphics/DSC05942a_wide.jpg)
+![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/master/photos_and_graphics/DSC05942a_wide.jpg)
