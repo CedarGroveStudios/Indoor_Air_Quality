@@ -17,7 +17,7 @@ This implementation uses the Adafruit Adafruit SCD-30 - NDIR CO2 Temperature and
 
 ...
 
-The Indoor Air Quality Monitor utilizes four PyBadge-stored files for operation:
+The Indoor Air Quality Monitor utilizes a number of PyBadge-stored files and conversion helpers in order to operate:
 *  co2_monitor.py (renamed to code.py), the primary code module, version 1.0, stored in the root directory
 *  c02_mon_config.py, a Python-formatted list of default operating parameters in text file format, stored in the root directory
 *  Two fonts stored in the fonts folder
