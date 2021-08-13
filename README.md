@@ -1,7 +1,7 @@
 # Cedar Grove Indoor Air Quality Monitor
 
 ### _A portable PyBadge indoor CO2 montor._
-![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/master/photos_and_graphics/IMG_0719.jpg)
+![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/master/photos_and_graphics/IMG_0719.jpeg)
 
 ## Overview
 
