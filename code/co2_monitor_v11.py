@@ -38,8 +38,9 @@ display.brightness = 0.75
 font_0 = bitmap_font.load_font("/fonts/OpenSans-9.bdf")
 font_1 = bitmap_font.load_font("/fonts/OpenSans-16.bdf")
 # Turn on speaker output
-speaker_enable = DigitalInOut(board.SPEAKER_ENABLE)
-speaker_enable.switch_to_output(value=True)
+if hasattr(board, "SPEAKER_ENABLE"):
+    speaker_enable = DigitalInOut(board.SPEAKER_ENABLE)
+    speaker_enable.switch_to_output(value=True)
 # Set NeoPixel brightness and clear all pixels
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 5, pixel_order=neopixel.GRB)
 pixels.brightness = 0.05
@@ -163,7 +164,7 @@ reference_group = displayio.Group()
 
 # Define trend chart group
 trend_chart = []
-point_width = 3
+point_width = int((WIDTH - 28) / 40)  # Save memory on large displays
 for i in range(0, WIDTH - 28, point_width):
     point = Rect(
         x=(WIDTH - 28) - i,
@@ -179,7 +180,7 @@ for i in range(0, WIDTH - 28, point_width):
 image_group.append(trend_group)
 
 # Define sensor and quality scale reference group
-cell_height = int(WIDTH / 160)  # save memory on large displays
+cell_height = int(HEIGHT / 64)  # Save memory on large displays
 for i in range(0, HEIGHT - 1, cell_height):
     cell = Rect(
         x=WIDTH - 20,
