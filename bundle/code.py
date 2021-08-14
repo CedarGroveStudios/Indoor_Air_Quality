@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor.py
-# 2021-08-13 v1.1
+# 2021-08-14 v1.1
 
 import time
 import board
@@ -42,9 +42,13 @@ if hasattr(board, "SPEAKER_ENABLE"):
     speaker_enable = DigitalInOut(board.SPEAKER_ENABLE)
     speaker_enable.switch_to_output(value=True)
 # Set NeoPixel brightness and clear all pixels
-pixels = neopixel.NeoPixel(board.NEOPIXEL, 5, pixel_order=neopixel.GRB)
-pixels.brightness = 0.05
-pixels.fill(0x000000)
+if hasattr(board, "NEOPIXEL"):
+    has_neopixel = True
+    pixels = neopixel.NeoPixel(board.NEOPIXEL, 5, pixel_order=neopixel.GRB)
+    pixels.brightness = 0.05
+    pixels.fill(0x000000)
+else:
+    has_neopixel = False
 
 # The board's integral display size
 WIDTH = display.width
@@ -181,10 +185,10 @@ image_group.append(trend_group)
 
 # Define sensor and quality scale reference group
 cell_height = int(HEIGHT / 64)  # Save memory on large displays
-for i in range(0, HEIGHT - 1, cell_height):
+for i in range(0, HEIGHT + cell_height, cell_height):
     cell = Rect(
         x=WIDTH - 20,
-        y=(HEIGHT - 1) - i,
+        y=(HEIGHT + 1) - i,
         width=20,
         height=cell_height,
         fill=index_to_rgb(i / HEIGHT),
@@ -197,7 +201,7 @@ good_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_POOR - CO2_GOOD) / CO2_MAXIMUM) * HEIGHT) + 10,
+    height=int(((CO2_POOR - CO2_GOOD) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=GREEN,
     outline=BLACK,
     stroke=1,
@@ -209,7 +213,7 @@ poor_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_WARNING - CO2_POOR) / CO2_MAXIMUM) * HEIGHT) + 10,
+    height=int(((CO2_WARNING - CO2_POOR) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=YELLOW,
     outline=BLACK,
     stroke=1,
@@ -221,7 +225,7 @@ warning_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_DANGER - CO2_WARNING) / CO2_MAXIMUM) * HEIGHT) + 10,
+    height=int(((CO2_DANGER - CO2_WARNING) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=ORANGE,
     outline=BLACK,
     stroke=1,
@@ -233,7 +237,7 @@ danger_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_MAXIMUM - CO2_DANGER) / CO2_MAXIMUM) * HEIGHT) + 10,
+    height=int(((CO2_MAXIMUM - CO2_DANGER) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=RED,
     outline=BLACK,
     stroke=1,
@@ -342,6 +346,8 @@ while True:
     # If alarm threshold is reached, flash NeoPixels, ALARM status, and play alarm tone
     if co2_value.text != " " and float(co2_value.text) >= ALARM_CO2:
         flash_status("ALARM", 0.75)
-        pixels.fill(RED)
+        if has_neopixel:
+            pixels.fill(RED)
         play_tone(880, 0.015)  # A5
-        pixels.fill(BLACK)
+        if has_neopixel:
+            pixels.fill(BLACK)
