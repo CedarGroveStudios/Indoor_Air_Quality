@@ -10,6 +10,6 @@ The Indoor Air Quality Monitor bundle folder contains all the files and helpers 
 
 Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file.
 
-Note: The primary Indoor Air Quality code module detects and adjusts automatically for display resolution -- although at this time, font sizes are fixed and look a little weird on the larger displays. The code was successfully tested on the PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and Clue boards without modification. Display font independence and dynamic graphic element sizing is a future possibility.
+Note: The primary Indoor Air Quality code module detects and adjusts automatically for display resolution -- although at this time, font sizes are fixed and look a little weird on the higher-resolution displays. The code was successfully tested on the PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and Clue boards without modification. Display font independence and dynamic graphic element sizing is a future possibility.
 
 ![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/main/photos_and_graphics/co2_monitor_board_line-up.png)
