@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor.py
-# 2021-08-14 v1.1
+# 2021-08-14 v1.2
 
 import time
 import board
@@ -34,9 +34,15 @@ scd = adafruit_scd30.SCD30(i2c)
 # Instantiate display, fonts, speaker, and neopixels
 display = board.DISPLAY
 display.brightness = 0.75
+WIDTH = display.width
+HEIGHT = display.height
 # Load the text font from the fonts folder
-font_0 = bitmap_font.load_font("/fonts/OpenSans-9.bdf")
-font_1 = bitmap_font.load_font("/fonts/OpenSans-16.bdf")
+if WIDTH > 160:
+    font_0 = bitmap_font.load_font("/fonts/OpenSans-12.bdf")
+    font_1 = bitmap_font.load_font("/fonts/Helvetica-Bold-36.bdf")
+else:
+    font_0 = bitmap_font.load_font("/fonts/OpenSans-9.bdf")
+    font_1 = bitmap_font.load_font("/fonts/OpenSans-16.bdf")
 # Turn on speaker output
 if hasattr(board, "SPEAKER_ENABLE"):
     speaker_enable = DigitalInOut(board.SPEAKER_ENABLE)
@@ -49,10 +55,6 @@ if hasattr(board, "NEOPIXEL"):
     pixels.fill(0x000000)
 else:
     has_neopixel = False
-
-# The board's integral display size
-WIDTH = display.width
-HEIGHT = display.height
 
 # Define a few colors
 BLACK = 0x000000
@@ -286,7 +288,7 @@ image_group.append(quality_label)
 
 status_label = Label(font_0, text=" ", color=None)
 status_label.anchor_point = (0.5, 0.5)
-status_label.anchored_position = ((WIDTH // 2) - 10, 25 + (HEIGHT // 2))
+status_label.anchored_position = ((WIDTH // 2) - 10, (HEIGHT // 2) + 27)
 image_group.append(status_label)
 
 alarm_label = Label(font_0, text="alarm", color=RED)
@@ -296,7 +298,7 @@ image_group.append(alarm_label)
 
 alarm_value = Label(font_0, text=str(ALARM_CO2), color=RED)
 alarm_value.anchor_point = (0, 0)
-alarm_value.anchored_position = (5, HEIGHT - 25)
+alarm_value.anchored_position = (5, HEIGHT - 28)
 image_group.append(alarm_value)
 
 temperature_label = Label(font_0, text="F", color=CYAN)
@@ -306,7 +308,7 @@ image_group.append(temperature_label)
 
 temperature_value = Label(font_0, text=" ", color=CYAN)
 temperature_value.anchor_point = (0.5, 0)
-temperature_value.anchored_position = ((WIDTH - 20) // 2, HEIGHT - 25)
+temperature_value.anchored_position = ((WIDTH - 20) // 2, HEIGHT - 28)
 image_group.append(temperature_value)
 
 humidity_label = Label(font_0, text="RH", color=CYAN)
@@ -316,7 +318,7 @@ image_group.append(humidity_label)
 
 humidity_value = Label(font_0, text=" ", color=CYAN)
 humidity_value.anchor_point = (1, 0)
-humidity_value.anchored_position = (WIDTH - 40, HEIGHT - 25)
+humidity_value.anchored_position = (WIDTH - 40, HEIGHT - 28)
 image_group.append(humidity_value)
 
 co2_label = Label(font_0, text="PPM CO2", color=BLUE)
