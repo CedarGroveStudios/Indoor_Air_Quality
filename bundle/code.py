@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor.py
-# 2021-08-15 v1.2
+# 2021-08-16 v1.2
 
 import time
 import board
@@ -106,19 +106,22 @@ def flash_status(text="", duration=0.05):
     return
 
 
-def update_image_frame(blocking=False):
-    """Acquire SCD-30 data and update the display. When blocking = True, the
-    function will wait until the sensor is ready, up to 3 seconds. When
-    blocking = False, the function will immediately return if the sensor data
-    is not available."""
+def update_image_frame(blocking=False, wait_time=3):
+    """Acquire SCD-30 data and update the display, returning sensor health flag.
+    When blocking = True, the function will wait until the sensor is ready, up
+    to 3 seconds (default). When blocking = False, the function will immediately
+    return if the sensor data is not available."""
+    sensor_data_valid = True  # Used for battery monitoring
     t0 = time.monotonic()
-    while blocking and (not scd.data_available) and (t0 - time.monotonic() < 3):
+    while blocking and (not scd.data_available) and (t0 - time.monotonic() < wait_time):
         watchdog.fill = RED
         flash_status("WARMUP", 0.5)
 
     if scd.data_available:
         watchdog.fill = YELLOW  # Data acquisition indicator: active
         sensor_co2 = round(scd.CO2)  # Retrieve quality data and round value
+        if sensor_co2 < 100:
+            sensor_data_valid = False
 
         sensor_co2_normalized = (
             sensor_co2 / CO2_MAXIMUM
@@ -175,7 +178,7 @@ def update_image_frame(blocking=False):
         trend_chart.append(sensor_co2_normalized)  # add latest point
 
     watchdog.fill = YELLOW_DK  # Data acquisition indicator: completed
-    return
+    return sensor_data_valid
 
 
 play_tone(880, 0.1)  # A5
@@ -360,7 +363,9 @@ play_tone(880, 0.1)  # A5
 
 # ###--- PRIMARY PROCESS LOOP ---###
 while True:
-    update_image_frame()  # If available, acquire sensor data and update display
+    sensor_valid = (
+        update_image_frame()
+    )  # If available, acquire sensor data and update display
 
     # If alarm threshold is reached, flash NeoPixels, ALARM status, and play alarm tone
     if co2_value.text != " " and float(co2_value.text) >= ALARM_CO2:
@@ -372,11 +377,12 @@ while True:
             pixels.fill(BLACK)
 
     if has_battery_mon:
-        """The 3.2-volt threshold is an approximation. Each board's battery
-        monitoring circuitry can vary +/-10% due to internal voltage divider
-        resistor tolerance."""
+        """Warns when battery voltage is low and the sensor data is potentially
+        invalid (measured value is less than 100). The 3.3-volt threshold is an
+        approximation since an individual board's battery monitoring circuitry
+        can vary +/-10% due to internal voltage divider resistor tolerance."""
         battery_volts = round(battery_mon.value * 6.6 / 0xFFF0, 2)
-        if battery_volts < 3.2:
+        if (not sensor_valid) and battery_volts < 3.3:
             play_tone(880, 0.030)  # A5
             flash_status("LOW BATTERY", 1)
-            flash_status(str(battery_volts) + "V", 1)
+            flash_status(str(battery_volts) + " volts", 1)
