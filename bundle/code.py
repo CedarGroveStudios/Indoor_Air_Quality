@@ -372,7 +372,11 @@ while True:
             pixels.fill(BLACK)
 
     if has_battery_mon:
-        battery_volts = battery_mon.value * 6.6 / 0xFFF0
-        if battery_volts < 3.3:
+        """The 3.2-volt threshold is an approximation. Each board's battery
+        monitoring circuitry can vary +/-10% due to internal voltage divider
+        resistor tolerance."""
+        battery_volts = round(battery_mon.value * 6.6 / 0xFFF0, 2)
+        if battery_volts < 3.2:
             play_tone(880, 0.030)  # A5
             flash_status("LOW BATTERY", 1)
+            flash_status(str(battery_volts) + "V", 1)
