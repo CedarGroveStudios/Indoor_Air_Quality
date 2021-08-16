@@ -2,13 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor.py
-# 2021-08-14 v1.2
+# 2021-08-15 v1.2
 
 import time
 import board
 import busio
+import os
 import displayio
 import neopixel
+from analogio import AnalogIn
 from digitalio import DigitalInOut
 from simpleio import tone
 from adafruit_display_text.label import Label
@@ -27,9 +29,24 @@ from co2_mon_config import (
     SENSOR_INTERVAL,
 )
 
+board_type = os.uname().machine
+if "Pybadge" or "Pygamer" in board_type:
+    battery_mon = AnalogIn(board.A6)
+    has_battery_mon = True
+else:
+    has_battery_mon = False
+
 # Instantiate SCD-30 with reliable I2C clock frequency (50KHz)
-i2c = busio.I2C(board.SCL, board.SDA, frequency=50000)
-scd = adafruit_scd30.SCD30(i2c)
+try:
+    i2c = busio.I2C(board.SCL, board.SDA, frequency=50000)
+    scd = adafruit_scd30.SCD30(i2c)
+except:
+    print("---------------------")
+    print("--- SCD30 SENSOR  ---")
+    print("--- NOT CONNECTED ---")
+    print("---------------------")
+    while True:
+        pass
 
 # Instantiate display, fonts, speaker, and neopixels
 display = board.DISPLAY
@@ -353,3 +370,9 @@ while True:
         play_tone(880, 0.015)  # A5
         if has_neopixel:
             pixels.fill(BLACK)
+
+    if has_battery_mon:
+        battery_volts = battery_mon.value * 6.6 / 0xFFF0
+        if battery_volts < 3.3:
+            play_tone(880, 0.030)  # A5
+            flash_status("LOW BATTERY", 1)
