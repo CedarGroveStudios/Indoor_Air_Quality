@@ -8,7 +8,7 @@ The Indoor Air Quality Monitor is a portable SCD-30-based ambient CO2 measuremen
 
 The Indoor Air Quality Monitor bundle folder contains all the files and helpers needed for CircuitPython version 6.x.
 
-Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file.
+Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. Besides selecting quality range thresholds and temperature units, the configuration file permits customization of on-screen text fields.
 
 The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and Clue boards without requiring modification.
 
