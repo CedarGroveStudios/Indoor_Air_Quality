@@ -10,6 +10,8 @@ The Indoor Air Quality Monitor bundle folder contains all the files and helpers 
 
 Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. Besides selecting quality range thresholds and temperature units, the configuration file permits customization of on-screen text fields.
 
-The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and Clue boards without requiring modification.
+The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the EdgeBadge, PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and Clue boards without requiring modification.
+
+Forced calibration can be initiated by pressing the START button on the PyBadge/PyGamer/EdgeBadge. Calibration is currently not supported on other boards.
 
 ![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/main/photos_and_graphics/co2_monitor_board_line-up.png)
