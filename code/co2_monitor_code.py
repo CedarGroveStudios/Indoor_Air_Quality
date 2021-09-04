@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2021 Cedar Grove Maker Studios
 # SPDX-License-Identifier: MIT
 
-# co2_monitor.py
-# 2021-08-16 v1.2
+# co2_monitor_code.py
+# 2021-09-04 v1.3
 
 import time
 import board
@@ -19,22 +19,15 @@ from adafruit_display_shapes.rect import Rect
 import adafruit_scd30
 from index_to_rgb.stoplight_spectrum import index_to_rgb
 from thermal_cam_converters import celsius_to_fahrenheit, fahrenheit_to_celsius
-from co2_mon_config import (
-    ALARM_CO2,
-    CO2_GOOD,
-    CO2_POOR,
-    CO2_WARNING,
-    CO2_DANGER,
-    CO2_MAXIMUM,
-    SENSOR_INTERVAL,
-)
+from co2_mon_config import *
 
 board_type = os.uname().machine
 if "Pybadge" or "Pygamer" in board_type:
+    has_buttons = has_battery_mon = True
+    has_touch = False
     battery_mon = AnalogIn(board.A6)
-    has_battery_mon = True
 else:
-    has_battery_mon = False
+    has_battery_mon = has_buttons = has_touch = False
 
 # Instantiate SCD-30 with reliable I2C clock frequency (50KHz)
 try:
@@ -115,7 +108,7 @@ def update_image_frame(blocking=False, wait_time=3):
     t0 = time.monotonic()
     while blocking and (not scd.data_available) and (t0 - time.monotonic() < wait_time):
         watchdog.fill = RED
-        flash_status("WARMUP", 0.5)
+        flash_status(WARMUP_STATUS, 0.5)
 
     if scd.data_available:
         watchdog.fill = YELLOW  # Data acquisition indicator: active
@@ -129,11 +122,12 @@ def update_image_frame(blocking=False, wait_time=3):
         sensor_rh = round(
             scd.relative_humidity
         )  # Retrieve humidity data and round value
-        sensor_temp_c = round(
+        sensor_temp = round(
             scd.temperature
         )  # Retrieve temperature data and round value
-        sensor_temp_f = round(
-            celsius_to_fahrenheit(sensor_temp_c)
+        if TEMP_UNIT == "F":
+            sensor_temp = round(
+            celsius_to_fahrenheit(sensor_temp)
         )  # Convert to Fahrenheit
 
         if sensor_co2 <= CO2_MAXIMUM:
@@ -146,27 +140,27 @@ def update_image_frame(blocking=False, wait_time=3):
             pointer.fill = RED
             pointer.y = 0
             sensor_co2 = CO2_MAXIMUM
-            flash_status("OVERLOAD", 0.75)
+            flash_status(OVERLOAD_STATUS, 0.75)
 
         # Update on-screen values
         co2_value.text = str(sensor_co2)
         humidity_value.text = str(sensor_rh)
-        temperature_value.text = str(sensor_temp_f)
-        alarm_value.text = str(ALARM_CO2)
+        temperature_value.text = str(sensor_temp)
+        alarm_value.text = str(ALARM_CO2[0])
 
         # Update quality evaluation text
-        if sensor_co2 > CO2_DANGER:
+        if sensor_co2 > CO2_DANGER[0]:
             quality_label.color = RED
-            quality_label.text = "DANGER"
-        elif scd.CO2 > CO2_WARNING:
+            quality_label.text = CO2_DANGER[1]
+        elif scd.CO2 > CO2_WARNING[0]:
             quality_label.color = ORANGE
-            quality_label.text = "WARNING"
-        elif scd.CO2 > CO2_POOR:
+            quality_label.text = CO2_WARNING[1]
+        elif scd.CO2 > CO2_POOR[0]:
             quality_label.color = YELLOW
-            quality_label.text = "POOR"
+            quality_label.text = CO2_POOR[1]
         else:
             quality_label.color = GREEN
-            quality_label.text = "GOOD"
+            quality_label.text = CO2_GOOD[1]
 
         # Draw the trend chart bars
         for i in range(0, len(trend_chart)):
@@ -206,7 +200,7 @@ for i in range(0, WIDTH - 28, point_width):
 image_group.append(trend_group)
 
 # Define sensor and quality scale reference group
-cell_height = int(HEIGHT / 64)  # Save memory on large displays
+cell_height = int(HEIGHT / 32)  # Save memory on large displays
 for i in range(0, HEIGHT + cell_height, cell_height):
     cell = Rect(
         x=WIDTH - 20,
@@ -223,43 +217,43 @@ good_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_POOR - CO2_GOOD) / CO2_MAXIMUM) * HEIGHT) + 3,
+    height=int(((CO2_POOR[0] - CO2_GOOD[0]) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=GREEN,
     outline=BLACK,
     stroke=1,
 )
-good_pointer.y = HEIGHT - int((CO2_POOR / CO2_MAXIMUM) * HEIGHT)
+good_pointer.y = HEIGHT - int((CO2_POOR[0] / CO2_MAXIMUM) * HEIGHT)
 reference_group.append(good_pointer)
 
 poor_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_WARNING - CO2_POOR) / CO2_MAXIMUM) * HEIGHT) + 3,
+    height=int(((CO2_WARNING[0] - CO2_POOR[0]) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=YELLOW,
     outline=BLACK,
     stroke=1,
 )
-poor_pointer.y = HEIGHT - int((CO2_WARNING / CO2_MAXIMUM) * HEIGHT)
+poor_pointer.y = HEIGHT - int((CO2_WARNING[0] / CO2_MAXIMUM) * HEIGHT)
 reference_group.append(poor_pointer)
 
 warning_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_DANGER - CO2_WARNING) / CO2_MAXIMUM) * HEIGHT) + 3,
+    height=int(((CO2_DANGER[0] - CO2_WARNING[0]) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=ORANGE,
     outline=BLACK,
     stroke=1,
 )
-warning_pointer.y = HEIGHT - int((CO2_DANGER / CO2_MAXIMUM) * HEIGHT)
+warning_pointer.y = HEIGHT - int((CO2_DANGER[0] / CO2_MAXIMUM) * HEIGHT)
 reference_group.append(warning_pointer)
 
 danger_pointer = Rect(
     x=WIDTH - 22,
     y=0,
     width=10,
-    height=int(((CO2_MAXIMUM - CO2_DANGER) / CO2_MAXIMUM) * HEIGHT) + 3,
+    height=int(((CO2_MAXIMUM - CO2_DANGER[0]) / CO2_MAXIMUM) * HEIGHT) + 3,
     fill=RED,
     outline=BLACK,
     stroke=1,
@@ -270,13 +264,13 @@ reference_group.append(danger_pointer)
 alarm_pointer_shadow = Rect(
     x=WIDTH - 25, y=0, width=26, height=4, fill=RED, outline=BLACK, stroke=1
 )
-alarm_pointer_shadow.y = HEIGHT - int((ALARM_CO2 / CO2_MAXIMUM) * HEIGHT)
+alarm_pointer_shadow.y = HEIGHT - int((ALARM_CO2[0] / CO2_MAXIMUM) * HEIGHT)
 reference_group.append(alarm_pointer_shadow)
 
 alarm_pointer = Rect(
     x=WIDTH - 25, y=0, width=26, height=3, fill=RED, outline=BLACK, stroke=1
 )
-alarm_pointer.y = HEIGHT - int((ALARM_CO2 / CO2_MAXIMUM) * HEIGHT)
+alarm_pointer.y = HEIGHT - int((ALARM_CO2[0] / CO2_MAXIMUM) * HEIGHT)
 reference_group.append(alarm_pointer)
 
 image_group.append(reference_group)
@@ -296,7 +290,7 @@ watchdog = Rect(x=1, y=1, width=10, height=10, fill=None, outline=None, stroke=0
 image_group.append(watchdog)
 
 # Define titles, labels, and values for the image group
-title_label = Label(font_0, text="Indoor Air Quality", color=CYAN)
+title_label = Label(font_0, text=SCREEN_TITLE, color=CYAN)
 title_label.anchor_point = (0.5, 0)
 title_label.anchored_position = ((WIDTH // 2) - 10, 0)
 image_group.append(title_label)
@@ -311,17 +305,17 @@ status_label.anchor_point = (0.5, 0.5)
 status_label.anchored_position = ((WIDTH // 2) - 10, (HEIGHT // 2) + 27)
 image_group.append(status_label)
 
-alarm_label = Label(font_0, text="alarm", color=RED)
+alarm_label = Label(font_0, text=ALARM_CO2[1], color=RED)
 alarm_label.anchor_point = (0, 0)
 alarm_label.anchored_position = (5, HEIGHT - 14)
 image_group.append(alarm_label)
 
-alarm_value = Label(font_0, text=str(ALARM_CO2), color=RED)
+alarm_value = Label(font_0, text=str(ALARM_CO2[0]), color=RED)
 alarm_value.anchor_point = (0, 0)
 alarm_value.anchored_position = (5, HEIGHT - 28)
 image_group.append(alarm_value)
 
-temperature_label = Label(font_0, text="F", color=CYAN)
+temperature_label = Label(font_0, text="°" + TEMP_UNIT, color=CYAN)
 temperature_label.anchor_point = (0.5, 0)
 temperature_label.anchored_position = ((WIDTH - 20) // 2, HEIGHT - 14)
 image_group.append(temperature_label)
@@ -368,7 +362,7 @@ while True:
     )  # If available, acquire sensor data and update display
 
     # If alarm threshold is reached, flash NeoPixels, ALARM status, and play alarm tone
-    if co2_value.text != " " and float(co2_value.text) >= ALARM_CO2:
+    if co2_value.text != " " and float(co2_value.text) >= ALARM_CO2[0]:
         flash_status("ALARM", 0.75)
         if has_neopixel:
             pixels.fill(RED)
