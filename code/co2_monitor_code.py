@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-04 v1.3
+# 2021-09-04 v1.4
 
 import time
 import board
@@ -192,8 +192,9 @@ def update_image_frame(blocking=False, wait_time=3):
     watchdog.fill = YELLOW_DK  # Data acquisition indicator: completed
     return sensor_data_valid
 
-def read_buttons(joystick=False):
+def read_buttons(joystick=False, timeout = 1.0):
     button_pressed = None
+    hold_time = 0
     buttons = panel.get_pressed()
     if buttons:
         play_tone(1319, 0.030)  # E6
@@ -209,15 +210,21 @@ def read_buttons(joystick=False):
             button_pressed = "up"
         if buttons & BUTTON_DOWN:
             button_pressed = "down"
+        timeout_beep = False
         while buttons:
             buttons = panel.get_pressed()
             time.sleep(0.1)
+            hold_time += 0.1
+            if hold_time >= timeout and not timeout_beep:
+                play_tone(1175, 0.030)  # D6
+                timeout_beep = True
+
     elif joystick:
         if joystick_y.value < 20000:
             button_pressed = "up"
         elif joystick_y.value > 44000:
             button_pressed = "down"
-    return button_pressed
+    return button_pressed, hold_time
 
 
 play_tone(880, 0.1)  # A5
@@ -404,11 +411,12 @@ play_tone(880, 0.1)  # A5
 while True:
 
     if has_buttons:
-        button_pressed = read_buttons()
+        button_pressed, hold_time = read_buttons()
         if button_pressed == "calibrate":  # Recalibrate mode selected (start)
-            flash_status("CALIBRATE", 0.5)
-            adafruit_scd30.forced_recalibration_reference = 400
-            play_tone(440, 0.1)  # A4
+            if hold_time >= 1.0:  # long press
+                flash_status("CALIBRATE", 0.5)
+                adafruit_scd30.forced_recalibration_reference = 400
+                play_tone(440, 0.1)  # A4
 
     sensor_valid = (
         update_image_frame()
