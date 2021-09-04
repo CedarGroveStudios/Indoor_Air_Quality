@@ -23,6 +23,24 @@ from co2_mon_config import *
 
 board_type = os.uname().machine
 if "Pybadge" or "Pygamer" in board_type:
+    from gamepadshift import GamePadShift
+
+    # Define and instantiate front panel buttons
+    BUTTON_LEFT = 0b10000000
+    BUTTON_UP = 0b01000000
+    BUTTON_DOWN = 0b00100000
+    BUTTON_RIGHT = 0b00010000
+    BUTTON_SELECT = 0b00001000
+    BUTTON_START = 0b00000100
+    BUTTON_A = 0b00000010
+    BUTTON_B = 0b00000001
+
+    panel = GamePadShift(
+        DigitalInOut(board.BUTTON_CLOCK),
+        DigitalInOut(board.BUTTON_OUT),
+        DigitalInOut(board.BUTTON_LATCH),
+        )
+
     has_buttons = has_battery_mon = True
     has_touch = False
     battery_mon = AnalogIn(board.A6)
@@ -173,6 +191,33 @@ def update_image_frame(blocking=False, wait_time=3):
 
     watchdog.fill = YELLOW_DK  # Data acquisition indicator: completed
     return sensor_data_valid
+
+def read_buttons(joystick=False):
+    button_pressed = None
+    buttons = panel.get_pressed()
+    if buttons:
+        play_tone(1319, 0.030)  # E6
+        if buttons & BUTTON_START:
+            button_pressed = "calibrate"
+        if buttons & BUTTON_A:
+            button_pressed = "a"
+        if buttons & BUTTON_B:
+            button_pressed = "b"
+        if buttons & BUTTON_SELECT:
+            button_pressed = "select"
+        if buttons & BUTTON_UP:
+            button_pressed = "up"
+        if buttons & BUTTON_DOWN:
+            button_pressed = "down"
+        while buttons:
+            buttons = panel.get_pressed()
+            time.sleep(0.1)
+    elif joystick:
+        if joystick_y.value < 20000:
+            button_pressed = "up"
+        elif joystick_y.value > 44000:
+            button_pressed = "down"
+    return button_pressed
 
 
 play_tone(880, 0.1)  # A5
@@ -357,6 +402,14 @@ play_tone(880, 0.1)  # A5
 
 # ###--- PRIMARY PROCESS LOOP ---###
 while True:
+
+    if has_buttons:
+        button_pressed = read_buttons()
+        if button_pressed == "calibrate":  # Recalibrate mode selected (start)
+            flash_status("CALIBRATE", 0.5)
+            adafruit_scd30.forced_recalibration_reference = 440
+            play_tone(440, 0.1)  # A4
+
     sensor_valid = (
         update_image_frame()
     )  # If available, acquire sensor data and update display
