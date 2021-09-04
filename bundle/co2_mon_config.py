@@ -19,7 +19,7 @@ CO2_MAXIMUM = 6000  # Maximum scale display value
 SENSOR_INTERVAL = 30  # Interval between measurements (2 to 1800 seconds)
 
 """# German Translation
-SCREEN_TITLE = "RaumluftqualitÃ¤t"
+SCREEN_TITLE = "Raumluftqualität"
 TEMP_UNIT = "C"  # "F" for Fahrenheit, "C" for Celsius
 WARMUP_STATUS = "WARMUP"
 OVERLOAD_STATUS = "OVERLOAD"
