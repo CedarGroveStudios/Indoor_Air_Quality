@@ -407,7 +407,7 @@ while True:
         button_pressed = read_buttons()
         if button_pressed == "calibrate":  # Recalibrate mode selected (start)
             flash_status("CALIBRATE", 0.5)
-            adafruit_scd30.forced_recalibration_reference = 440
+            adafruit_scd30.forced_recalibration_reference = 400
             play_tone(440, 0.1)  # A4
 
     sensor_valid = (
