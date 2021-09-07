@@ -5,6 +5,7 @@ from air_mon_colors import *
 
 # English Translation
 SCREEN_TITLE = "Air Quality"
+BRIGHTNESS = 0.25  # 0.0 to 1.0; 0.75 is typical
 TEMP_UNIT = "F"  # "F" for Fahrenheit, "C" for Celsius
 WARMUP_STATUS = "WARMUP"
 OVERLOAD_STATUS = "OVERLOAD"

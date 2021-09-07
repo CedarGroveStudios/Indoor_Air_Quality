@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # air_monitor_code.py
-# 2021-09-06 v1.5.1
+# 2021-09-06 v1.5.2
 
 import time
 import board
@@ -49,9 +49,10 @@ if "Pybadge" or "Pygamer" in board_type:
 else:
     has_battery_mon = has_buttons = has_touch = False
 
+# Instantiate slow I2C bus frequency for sensors (50KHz)
 i2c = busio.I2C(board.SCL, board.SDA, frequency=50000)
-# Instantiate SCD-30 with reliable I2C clock frequency (50KHz)
-co2_sensor_exists = False
+
+# Instantiate CO2 sensor
 try:
     scd = adafruit_scd30.SCD30(i2c)
     co2_sensor_exists = True
@@ -65,7 +66,6 @@ except:
         pass"""
 
 # Instantiate AQI sensor
-aqi_sensor_exists = False
 try:
     pm25 = PM25_I2C(i2c)
     aqi_sensor_exists = True
@@ -83,7 +83,7 @@ aqi_sensor_exists = True  # ### TEMPORARY SETTING
 
 # Instantiate display, fonts, speaker, and neopixels
 display = board.DISPLAY
-display.brightness = 0.75
+display.brightness = BRIGHTNESS
 WIDTH = display.width
 HEIGHT = display.height
 # Load the text font from the fonts folder
