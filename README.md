@@ -8,10 +8,10 @@ The Indoor Air Quality Monitor is a portable SCD-30-based ambient CO2 measuremen
 
 The Indoor Air Quality Monitor bundle folder contains all the files and helpers needed for CircuitPython version 6.x.
 
-Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. Besides selecting quality range thresholds and temperature units, the configuration file permits customization of on-screen text fields.
+Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. Besides selecting initial temperature units and display brightness, the configuration file supports language translation.
 
 The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the EdgeBadge, PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and Clue boards without requiring modification.
 
-Forced calibration is initiated by pressing the START button on the PyBadge/PyGamer/EdgeBadge. Calibration is currently not supported on other boards.
+Forced calibration is initiated by pressing the _START_ button on the PyBadge/PyGamer/EdgeBadge. Pressing _SELECT_ changes temperature units. The _A_ button toggles between languages. Button selections are not supported on other boards at this time.
 
 ![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/main/photos_and_graphics/co2_monitor_board_line-up.png)
