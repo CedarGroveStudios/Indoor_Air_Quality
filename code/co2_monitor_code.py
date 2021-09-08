@@ -21,7 +21,7 @@ import adafruit_scd30
 from cedargrove_unit_converter.index_to_rgb.stoplight_spectrum import index_to_rgb
 from cedargrove_unit_converter.temperature import celsius_to_fahrenheit
 from cedargrove_unit_converter.air_quality.co2_air_quality import co2_ppm_to_quality
-from air_mon_interpret.english_to_deutsch import interpret
+from cedargrove_unit_converter.air_quality.interpreter.english_to_deutsch import interpret
 from co2_mon_config import *
 
 SCREEN_TITLE = "Indoor Air Quality"
