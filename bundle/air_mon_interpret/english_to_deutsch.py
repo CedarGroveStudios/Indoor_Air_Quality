@@ -1,13 +1,13 @@
-# english_to_deutch.py
-# English to Deutch (German)
+# english_to_deutsch.py
+# English to Deutsch (German)
 
-ENG_DEUTCH = {
+ENG_DEUTSCH = {
     "Air Quality": "Luftqualität",
     "ALARM": "ALARM",
     "Alarm": "Alarm",
     "CALIBRATE": "KALIBRIEREN",
     "DANGER": "GEFAHR",
-    "ENGLISH": "DEUTCH",
+    "ENGLISH": "DEUTSCH",
     "GOOD": "GUT",
     "HAZARDOUS": "GEFÄHRLICH",
     "Indoor Air Quality": "Raumluftqualität",
@@ -29,6 +29,6 @@ ENG_DEUTCH = {
 def interpret(enable, english_phrase):
     # returns translated phrase or original phrase
     if enable:
-        if english_phrase in ENG_DEUTCH:
-            return ENG_DEUTCH[english_phrase]
+        if english_phrase in ENG_DEUTSCH:
+            return ENG_DEUTSCH[english_phrase]
     return english_phrase
