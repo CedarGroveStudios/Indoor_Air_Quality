@@ -1,7 +1,11 @@
+# SPDX-FileCopyrightText: 2021 Cedar Grove Studios
+# SPDX-License-Identifier: MIT
+
 # grayscale_spectrum.py
 # 2021-05-19 version 1.1
-# Copyright 2021 Cedar Grove Studios
+
 # Spectral Index to Grayscale RGB Converter Helper
+
 
 def map_range(x, in_min, in_max, out_min, out_max):
     """
@@ -23,6 +27,7 @@ def map_range(x, in_min, in_max, out_min, out_max):
     if out_min <= out_max:
         return max(min(mapped, out_max), out_min)
     return min(max(mapped, out_max), out_min)
+
 
 def index_to_rgb(index=0, gamma=0.8):
     """

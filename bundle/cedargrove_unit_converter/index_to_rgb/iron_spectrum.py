@@ -1,7 +1,11 @@
+# SPDX-FileCopyrightText: 2021 Cedar Grove Studios
+# SPDX-License-Identifier: MIT
+
 # iron_spectrum.py
 # 2021-05-27 version 1.2
-# Copyright 2021 Cedar Grove Studios
+
 # Temperature Index to Iron Pseudocolor Spectrum RGB Converter Helper
+
 
 def map_range(x, in_min, in_max, out_min, out_max):
     """
@@ -23,6 +27,7 @@ def map_range(x, in_min, in_max, out_min, out_max):
     if out_min <= out_max:
         return max(min(mapped, out_max), out_min)
     return min(max(mapped, out_max), out_min)
+
 
 def index_to_rgb(index=0, gamma=0.5):
     """
@@ -47,7 +52,7 @@ def index_to_rgb(index=0, gamma=0.5):
         red = map_range(band, 200, 300, 0.6, 1.0) ** gamma
         grn = 0.0
         blu = map_range(band, 200, 300, 1.0, 0.0) ** gamma
-    if band >= 300 and band < 400:   # red to orange
+    if band >= 300 and band < 400:  # red to orange
         red = 1.0 ** gamma
         grn = map_range(band, 300, 400, 0.0, 0.5) ** gamma
         blu = 0.0

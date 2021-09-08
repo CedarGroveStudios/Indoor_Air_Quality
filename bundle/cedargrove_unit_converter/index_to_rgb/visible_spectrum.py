@@ -1,9 +1,13 @@
+# SPDX-FileCopyrightText: 2021 Cedar Grove Studios
+# SPDX-License-Identifier: MIT
+
 # visible_spectrum.py
 # 2021-05-27 version 1.2
-# Copyright 2021 Cedar Grove Studios
+
 # Spectral Index to Visible (Rainbow) Spectrum RGB Converter Helper
 # Based on original 1996 Fortran code by Dan Bruton:
 #   physics.sfasu.edu/astro/color/spectra.html
+
 
 def index_to_rgb(index=0, gamma=0.5):
     """
