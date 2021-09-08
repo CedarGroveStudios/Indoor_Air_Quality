@@ -1,5 +1,6 @@
 # english_to_deutsch.py
 # English to Deutsch (German)
+# Thank you to @effiksmusic for the translation!
 
 ENG_DEUTSCH = {
     "Air Quality": "Luftqualität",
@@ -13,15 +14,15 @@ ENG_DEUTSCH = {
     "Indoor Air Quality": "Raumluftqualität",
     "INVALID": "UNGÜLTIG",
     "LANGUAGE": "SPRACHE",
-    "LOW BATTERY": "NIEDRIGER BATTERIE",
+    "LOW BATTERY": "BATTERIE LEER",
     "MODERATE": "MÄSSIG",
     "OVERRANGE": "ÜBER MAXIMUM",
     "POOR": "SCHLECT",
-    "SENSITIVE": "EMPFIDLICH",
+    "SENSITIVE": "SENSIBEL",
     "TEMPERATURE": "TEMPERATUR",
     "UNHEALTHY": "UNGESUND",
     "V UNHEALTHY": "SEHR UNGESUND",
-    "WARMUP": "ERWÄRMEN",
+    "WARMUP": "VORBEREITUNG",
     "WARNING": "WARNUNG",
 }
 
