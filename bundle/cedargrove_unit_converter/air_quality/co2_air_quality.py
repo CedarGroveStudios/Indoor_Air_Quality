@@ -12,6 +12,7 @@ BLUE = 0x0000FF
 ORANGE = 0xFFA500
 GREEN = 0x00FF00
 
+
 def map_range(x, in_min, in_max, out_min, out_max):
     """
     Maps and constrains an input value from one range of values to another.

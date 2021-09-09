@@ -14,6 +14,7 @@ GREEN = 0x00FF00
 PURPLE = 0x800080
 MAROON = 0x800000
 
+
 def map_range(x, in_min, in_max, out_min, out_max):
     """
     Maps and constrains an input value from one range of values to another.
@@ -34,6 +35,7 @@ def map_range(x, in_min, in_max, out_min, out_max):
     if out_min <= out_max:
         return max(min(mapped, out_max), out_min)
     return min(max(mapped, out_max), out_min)
+
 
 def concentration_to_aqi(pm25_value):
     """Returns a data valid flag, calculated air quality index (AQI), color,

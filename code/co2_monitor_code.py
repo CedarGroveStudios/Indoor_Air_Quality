@@ -21,7 +21,9 @@ import adafruit_scd30
 from cedargrove_unit_converter.index_to_rgb.stoplight_spectrum import index_to_rgb
 from cedargrove_unit_converter.temperature import celsius_to_fahrenheit
 from cedargrove_unit_converter.air_quality.co2_air_quality import co2_ppm_to_quality
-from cedargrove_unit_converter.air_quality.interpreter.english_to_deutsch import interpret
+from cedargrove_unit_converter.air_quality.interpreter.english_to_deutsch import (
+    interpret,
+)
 from co2_mon_config import *
 
 SCREEN_TITLE = "Indoor Air Quality"
@@ -68,7 +70,7 @@ except:
     print("--- NOT CONNECTED ---")
     co2_sensor_exists = False
 
-#co2_sensor_exists = False # ### TEMPORARY SETTING
+# co2_sensor_exists = False # ### TEMPORARY SETTING
 
 # Instantiate display, fonts, speaker, and neopixels
 display = board.DISPLAY
