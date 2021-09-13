@@ -33,7 +33,8 @@ else:
     TRANSLATE = True
 
 board_type = os.uname().machine
-if ("Pybadge" or "Pygamer") in board_type:
+print("Board:", board_type)
+if ("Pygamer" in board_type) or ("Pybadge" in board_type) or ("EdgeBadge" in board_type):
     from gamepadshift import GamePadShift
 
     # Define and instantiate front panel buttons
