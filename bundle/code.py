@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-08 v1.6.3
+# 2021-09-13 v1.6.4
 
 import time
 import board
@@ -33,7 +33,7 @@ else:
     TRANSLATE = True
 
 board_type = os.uname().machine
-if "Pybadge" or "Pygamer" in board_type:
+if ("Pybadge" or "Pygamer") in board_type:
     from gamepadshift import GamePadShift
 
     # Define and instantiate front panel buttons
