@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-13 v1.6.5
+# 2021-09-14 v1.6.7
 
 import time
 import board
@@ -34,30 +34,15 @@ else:
 
 board_type = os.uname().machine
 print("Board:", board_type)
-if ("Pygamer" in board_type) or ("Pybadge" in board_type) or ("EdgeBadge" in board_type):
-    from gamepadshift import GamePadShift
-
-    # Define and instantiate front panel buttons
-    BUTTON_LEFT = 0b10000000
-    BUTTON_UP = 0b01000000
-    BUTTON_DOWN = 0b00100000
-    BUTTON_RIGHT = 0b00010000
-    BUTTON_SELECT = 0b00001000
-    BUTTON_START = 0b00000100
-    BUTTON_A = 0b00000010
-    BUTTON_B = 0b00000001
-
-    panel = GamePadShift(
-        DigitalInOut(board.BUTTON_CLOCK),
-        DigitalInOut(board.BUTTON_OUT),
-        DigitalInOut(board.BUTTON_LATCH),
-    )
-
-    has_buttons = has_battery_mon = True
-    has_touch = False
+has_battery_mon = False
+if ("Pygamer" in board_type) or ("Pybadge" in board_type):
+    import air_monitor_buttons.buttons_pybadge as air_monitor_panel
+    has_battery_mon = True
     battery_mon = AnalogIn(board.A6)
-else:
-    has_battery_mon = has_buttons = has_touch = False
+elif "PyPortal" in board_type:
+    import air_monitor_buttons.buttons_pyportal as air_monitor_panel
+
+panel = air_monitor_panel.Buttons()
 
 # Instantiate slow I2C bus frequency for sensors (50KHz)
 i2c = busio.I2C(board.SCL, board.SDA, frequency=50000)
@@ -188,18 +173,12 @@ def read_buttons(joystick=False, timeout=1.0):
     buttons = panel.get_pressed()
     if buttons:
         play_tone(1319, 0.030)  # E6
-        if buttons & BUTTON_START:
+        if buttons & BUTTON_CALIBRATE:
             button_pressed = "calibrate"
-        if buttons & BUTTON_A:
-            button_pressed = "a"
-        if buttons & BUTTON_B:
-            button_pressed = "b"
-        if buttons & BUTTON_SELECT:
-            button_pressed = "select"
-        if buttons & BUTTON_UP:
-            button_pressed = "up"
-        if buttons & BUTTON_DOWN:
-            button_pressed = "down"
+        if buttons & BUTTON_LANGUAGE:
+            button_pressed = "language"
+        if buttons & BUTTON_TEMPERATURE:
+            button_pressed = "temperature"
         timeout_beep = False
         while buttons:
             buttons = panel.get_pressed()
@@ -208,12 +187,6 @@ def read_buttons(joystick=False, timeout=1.0):
             if hold_time >= timeout and not timeout_beep:
                 play_tone(1175, 0.030)  # D6
                 timeout_beep = True
-
-    elif joystick:
-        if joystick_y.value < 20000:
-            button_pressed = "up"
-        elif joystick_y.value > 44000:
-            button_pressed = "down"
     return button_pressed, hold_time
 
 
@@ -395,6 +368,7 @@ co2_value.anchor_point = (0.5, 1.0)
 co2_value.anchored_position = ((WIDTH - 20) // 2, HEIGHT // 2)
 image_group.append(co2_value)
 
+image_group.append(panel.button_display_group)
 
 # ###--- PRIMARY PROCESS SETUP ---###
 # Activate display and play welcome tones
@@ -414,36 +388,37 @@ if not co2_sensor_exists:
 # ###--- PRIMARY PROCESS LOOP ---###
 t0 = time.monotonic()  # Reset sensor interval timer
 while True:
-    if has_buttons:
-        button_pressed, hold_time = read_buttons()
-        if button_pressed == "calibrate":  # Recalibrate mode selected (start)
-            if hold_time >= 1.0:  # long press
-                if co2_sensor_exists:
-                    flash_status(interpret(TRANSLATE, "CALIBRATE"), 0.5)
-                    scd.forced_recalibration_reference = 400
-                else:
-                    flash_status(interpret(TRANSLATE, "NO CO2 SENSOR"), 0.5)
-                play_tone(440, 0.1)  # A4
-        if button_pressed == "select":  # Toggle temperature units
-            if hold_time >= 1.0:  # long press
-                flash_status(interpret(TRANSLATE, "TEMPERATURE"), 0.5)
-                if TEMP_UNIT == "F":
-                    TEMP_UNIT = "C"
-                else:
-                    TEMP_UNIT = "F"
-                co2_temp_label.text = "°" + TEMP_UNIT
-                play_tone(440, 0.1)  # A4
-        if button_pressed == "a":  # Toggle language
-            if hold_time >= 1.0:  # long press
-                flash_status(interpret(TRANSLATE, "LANGUAGE"), 0.5)
-                TRANSLATE = not TRANSLATE
-                title_label.text = interpret(TRANSLATE, SCREEN_TITLE)
-                co2_alarm_label.text = interpret(TRANSLATE, CO2_ALARM[2])
-                play_tone(440, 0.1)  # A4
-                if TRANSLATE:
-                    flash_status(interpret(True, "ENGLISH"), 0.5)
-                else:
-                    flash_status("ENGLISH", 0.5)
+    panel.timeout = 1.0  # Set button hold time: long hold
+    button_pressed, hold_time = panel.read_buttons()
+    if button_pressed == "calibrate":  # Recalibrate mode selected (start)
+        if hold_time >= 1.0:  # long press
+            if co2_sensor_exists:
+                flash_status(interpret(TRANSLATE, "CALIBRATE"), 0.5)
+                scd.forced_recalibration_reference = 400
+                print("recal ref:", scd.forced_recalibration_reference)
+            else:
+                flash_status(interpret(TRANSLATE, "NO CO2 SENSOR"), 0.5)
+            play_tone(440, 0.1)  # A4
+    if button_pressed == "temperature":  # Toggle temperature units
+        if hold_time >= 1.0:  # long press
+            flash_status(interpret(TRANSLATE, "TEMPERATURE"), 0.5)
+            if TEMP_UNIT == "F":
+                TEMP_UNIT = "C"
+            else:
+                TEMP_UNIT = "F"
+            co2_temp_label.text = "°" + TEMP_UNIT
+            play_tone(440, 0.1)  # A4
+    if button_pressed == "language":  # Toggle language
+        if hold_time >= 1.0:  # long press
+            flash_status(interpret(TRANSLATE, "LANGUAGE"), 0.5)
+            TRANSLATE = not TRANSLATE
+            title_label.text = interpret(TRANSLATE, SCREEN_TITLE)
+            co2_alarm_label.text = interpret(TRANSLATE, CO2_ALARM[2])
+            play_tone(440, 0.1)  # A4
+            if TRANSLATE:
+                flash_status(interpret(True, "ENGLISH"), 0.5)
+            else:
+                flash_status("ENGLISH", 0.5)
 
     if time.monotonic() - SENSOR_INTERVAL > t0:
         # If available, acquire sensor data and update display
