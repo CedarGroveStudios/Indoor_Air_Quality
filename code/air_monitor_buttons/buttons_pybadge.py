@@ -64,7 +64,7 @@ class Buttons:
         self.calibrate_button.outline = None
 
         self.temperature_button = Rect(
-            x=10,
+            x=1,
             y=int(self._HEIGHT * 0.75) - 1,
             width=self._WIDTH - 20,
             height=int(self._HEIGHT * 0.25),
