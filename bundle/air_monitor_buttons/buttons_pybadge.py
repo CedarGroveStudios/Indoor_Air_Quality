@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # buttons_pybadge.py
-# 2021-09-14 v1.0.0
+# 2021-09-14 v1.0.1
 
 import board
 import time
@@ -18,11 +18,13 @@ from simpleio import tone
 
 
 class Buttons:
-    def __init__(self, disp_height=128, disp_width=160):
+    def __init__(self):
         """Instantiate the air monitor button decoder for the
         PyBadge/PyGamer/EdgeBadge device. Returns displayio button group."""
 
         self._timeout = 1
+        self._WIDTH = board.DISPLAY.width
+        self._HEIGHT = board.DISPLAY.height
 
         # Define and instantiate front panel buttons
         self._BUTTON_TEMPERATURE = 0b00001000  # Select
@@ -38,10 +40,10 @@ class Buttons:
         # Build displayio button group
         self._button_group = displayio.Group()
         self.language_button = Rect(
-            x=0,
-            y=0,
-            width=disp_width,
-            height=int(disp_height * 0.25),
+            x=1,
+            y=1,
+            width=self._WIDTH - 20,
+            height=int(self._HEIGHT * 0.25),
             fill=None,
             outline=0x000000,
             stroke=1,
@@ -50,10 +52,10 @@ class Buttons:
         self.language_button.outline = None
 
         self.calibrate_button = Rect(
-            x=0,
-            y=int(disp_height * 0.25),
-            width=disp_width,
-            height=int(disp_height * 0.50),
+            x=int((self._WIDTH - 20) * 0.25),
+            y=int(self._HEIGHT * 0.33),
+            width=int((self._WIDTH - 20) / 2),
+            height=int(self._HEIGHT * 0.33),
             fill=None,
             outline=0x000000,
             stroke=1,
@@ -62,10 +64,10 @@ class Buttons:
         self.calibrate_button.outline = None
 
         self.temperature_button = Rect(
-            x=0,
-            y=int(disp_height * 0.75),
-            width=disp_width,
-            height=int(disp_height * 0.25),
+            x=10,
+            y=int(self._HEIGHT * 0.75) - 1,
+            width=self._WIDTH - 20,
+            height=int(self._HEIGHT * 0.25),
             fill=None,
             outline=0x000000,
             stroke=1,
