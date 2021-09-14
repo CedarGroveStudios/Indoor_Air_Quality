@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-13 v1.6.4
+# 2021-09-13 v1.6.5
 
 import time
 import board
@@ -21,7 +21,7 @@ import adafruit_scd30
 from cedargrove_unit_converter.index_to_rgb.stoplight_spectrum import index_to_rgb
 from cedargrove_unit_converter.temperature import celsius_to_fahrenheit
 from cedargrove_unit_converter.air_quality.co2_air_quality import co2_ppm_to_quality
-from cedargrove_unit_converter.air_quality.interpreter.english_to_deutsch import (
+from cedargrove_unit_converter.air_quality.interpreter.english_to_pirate import (
     interpret,
 )
 from co2_mon_config import *
@@ -420,7 +420,7 @@ while True:
             if hold_time >= 1.0:  # long press
                 if co2_sensor_exists:
                     flash_status(interpret(TRANSLATE, "CALIBRATE"), 0.5)
-                    adafruit_scd30.forced_recalibration_reference = 400
+                    scd.forced_recalibration_reference = 400
                 else:
                     flash_status(interpret(TRANSLATE, "NO CO2 SENSOR"), 0.5)
                 play_tone(440, 0.1)  # A4
