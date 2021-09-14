@@ -6,8 +6,9 @@
 
 import board
 import time
-#from digitalio import DigitalInOut
-#from analogio import AnalogIn
+
+# from digitalio import DigitalInOut
+# from analogio import AnalogIn
 import displayio
 from adafruit_button import Button
 import adafruit_touchscreen
@@ -93,6 +94,7 @@ class Buttons:
     def timeout(self):
         """Button timeout duration setting."""
         return self._timeout
+
     @timeout.setter
     def timeout(self, hold_time=1.0):
         """Select timeout duration value in seconds, positive float value."""
