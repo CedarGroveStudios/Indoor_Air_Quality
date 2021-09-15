@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-14 v1.6.8
+# 2021-09-15 v1.6.9
 
 import time
 import board
@@ -43,13 +43,15 @@ elif "PyPortal" in board_type:
     import air_monitor_buttons.buttons_pyportal as air_monitor_panel
 elif "CLUE" in board_type:
     import air_monitor_buttons.buttons_clue as air_monitor_panel
+elif "FunHouse" in board_type:
+    import air_monitor_buttons.buttons_funhouse as air_monitor_panel
 else:
     print("--- Incompatible board ---")
 
 panel = air_monitor_panel.Buttons()
 
-# Instantiate slow I2C bus frequency for sensors (50KHz)
-i2c = busio.I2C(board.SCL, board.SDA, frequency=50000)
+# Instantiate extra slow I2C bus frequency for sensors (25KHz)
+i2c = busio.I2C(board.SCL, board.SDA, frequency=25000)
 
 # Instantiate CO2 sensor
 try:
@@ -91,7 +93,10 @@ else:
 # ### Helpers ###
 def play_tone(freq=440, duration=0.01):
     """ Play tones through the integral speaker. """
-    tone(board.A0, freq, duration)
+    if "FunHome" in board_type:
+        pass
+    else:
+        tone(board.A0, freq, duration)
     return
 
 
