@@ -41,6 +41,10 @@ if ("Pygamer" in board_type) or ("Pybadge" in board_type):
     battery_mon = AnalogIn(board.A6)
 elif "PyPortal" in board_type:
     import air_monitor_buttons.buttons_pyportal as air_monitor_panel
+elif "CLUE" in board_type:
+    import air_monitor_buttons.buttons_clue as air_monitor_panel
+else:
+    print("--- Incompatible board ---")
 
 panel = air_monitor_panel.Buttons()
 
@@ -166,30 +170,6 @@ def update_co2_image_frame(blocking=False, wait_time=3):
             co2_trend_chart.append(sensor_co2_norm)  # add latest point
     return sensor_data_valid
 
-
-def read_buttons(joystick=False, timeout=1.0):
-    button_pressed = None
-    hold_time = 0
-    buttons = panel.get_pressed()
-    if buttons:
-        play_tone(1319, 0.030)  # E6
-        if buttons & BUTTON_CALIBRATE:
-            button_pressed = "calibrate"
-        if buttons & BUTTON_LANGUAGE:
-            button_pressed = "language"
-        if buttons & BUTTON_TEMPERATURE:
-            button_pressed = "temperature"
-        timeout_beep = False
-        while buttons:
-            buttons = panel.get_pressed()
-            time.sleep(0.1)
-            hold_time += 0.1
-            if hold_time >= timeout and not timeout_beep:
-                play_tone(1175, 0.030)  # D6
-                timeout_beep = True
-    return button_pressed, hold_time
-
-
 play_tone(880, 0.1)  # A5
 
 # ### Define the display groups ###
@@ -200,6 +180,8 @@ reference_group = displayio.Group()
 # Define co2 trend chart group and points area
 co2_trend_chart = []
 point_width = int((WIDTH - 28) / 40)  # 40 trend points
+if "CLUE" in board_type:
+    point_width = int((WIDTH - 28) / 30)  # 30 trend points
 for i in range(0, WIDTH - 28, point_width):
     point = Rect(
         x=(WIDTH - 28) - i,
@@ -354,7 +336,8 @@ co2_value.anchor_point = (0.5, 1.0)
 co2_value.anchored_position = ((WIDTH - 20) // 2, HEIGHT // 2)
 image_group.append(co2_value)
 
-image_group.append(panel.button_display_group)
+if panel.button_display_group:
+    image_group.append(panel.button_display_group)
 
 # ###--- PRIMARY PROCESS SETUP ---###
 # Activate display and play welcome tones

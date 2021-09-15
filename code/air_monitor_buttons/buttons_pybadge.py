@@ -20,7 +20,7 @@ from simpleio import tone
 class Buttons:
     def __init__(self):
         """Instantiate the air monitor button decoder for the
-        PyBadge/PyGamer/EdgeBadge device. Returns displayio button group."""
+        PyBadge/PyGamer/EdgeBadge device. Builds displayio button group."""
 
         self._timeout = 1
         self._WIDTH = board.DISPLAY.width

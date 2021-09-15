@@ -17,7 +17,8 @@ from simpleio import tone
 
 class Buttons:
     def __init__(self, disp_height=128, disp_width=160):
-        """Instantiate the air monitor buttons for PyPortal devices."""
+        """Instantiate the air monitor buttons for PyPortal devices.
+        Builds displayio button group."""
 
         self._timeout = 1
         self._WIDTH = board.DISPLAY.width
