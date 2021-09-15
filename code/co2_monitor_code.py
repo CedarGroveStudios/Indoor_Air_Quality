@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-14 v1.6.7
+# 2021-09-14 v1.6.8
 
 import time
 import board
@@ -18,7 +18,6 @@ from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
 from adafruit_display_shapes.rect import Rect
 import adafruit_scd30
-from cedargrove_unit_converter.index_to_rgb.stoplight_spectrum import index_to_rgb
 from cedargrove_unit_converter.temperature import celsius_to_fahrenheit
 from cedargrove_unit_converter.air_quality.co2_air_quality import co2_ppm_to_quality
 from cedargrove_unit_converter.air_quality.interpreter.english_to_deutsch import (
@@ -215,26 +214,12 @@ for i in range(0, WIDTH - 28, point_width):
     co2_trend_group.append(point)
 image_group.append(co2_trend_group)
 
-# Add superfluous color margin
-cell_height = int(HEIGHT / 32)  # Save memory on large displays
-for i in range(0, HEIGHT + cell_height, cell_height):
-    cell = Rect(
-        x=WIDTH - 20,
-        y=(HEIGHT + 1) - i,
-        width=20,
-        height=cell_height,
-        fill=index_to_rgb(i / HEIGHT),
-        outline=None,
-        stroke=0,
-    )
-    reference_group.append(cell)
-
 # Define CO2 sensor quality scale
 if co2_sensor_exists:
     co2_good_scale = Rect(
         x=WIDTH - 22,
         y=HEIGHT - int((1000 / 6000) * HEIGHT),
-        width=10,
+        width=20,
         height=int(((1000 - 0) / 6000) * HEIGHT) + 3,
         fill=GREEN,
         outline=BLACK,
@@ -245,7 +230,7 @@ if co2_sensor_exists:
     co2_poor_scale = Rect(
         x=WIDTH - 22,
         y=HEIGHT - int((2000 / 6000) * HEIGHT),
-        width=10,
+        width=20,
         height=int(((2000 - 1000) / 6000) * HEIGHT) + 3,
         fill=YELLOW,
         outline=BLACK,
@@ -256,7 +241,7 @@ if co2_sensor_exists:
     co2_warning_scale = Rect(
         x=WIDTH - 22,
         y=HEIGHT - int((5000 / 6000) * HEIGHT),
-        width=10,
+        width=20,
         height=int(((5000 - 2000) / 6000) * HEIGHT) + 3,
         fill=ORANGE,
         outline=BLACK,
@@ -267,7 +252,7 @@ if co2_sensor_exists:
     co2_danger_scale = Rect(
         x=WIDTH - 22,
         y=HEIGHT - int((6000 / 6000) * HEIGHT),
-        width=10,
+        width=20,
         height=int(((6000 - 5000) / 6000) * HEIGHT) + 3,
         fill=RED,
         outline=BLACK,
@@ -276,7 +261,7 @@ if co2_sensor_exists:
     reference_group.append(co2_danger_scale)
 
     co2_alarm_pointer_shadow = Rect(
-        x=WIDTH - 25, y=0, width=14, height=4, fill=RED, outline=BLACK, stroke=1
+        x=WIDTH - 25, y=0, width=22, height=4, fill=RED, outline=BLACK, stroke=1
     )
     co2_alarm_pointer_shadow.y = HEIGHT - int((CO2_ALARM[0] / 6000) * HEIGHT)
     reference_group.append(co2_alarm_pointer_shadow)
@@ -284,7 +269,7 @@ if co2_sensor_exists:
     co2_alarm_pointer = Rect(
         x=WIDTH - 25,
         y=HEIGHT - int((CO2_ALARM[0] / 6000) * HEIGHT),
-        width=14,
+        width=22,
         height=3,
         fill=CO2_ALARM[1],
         outline=BLACK,
@@ -296,12 +281,12 @@ if co2_sensor_exists:
 
 # Define co2 pointer
 co2_pointer_shadow = Rect(
-    x=WIDTH - 25, y=HEIGHT + 2, width=14, height=6, fill=None, outline=BLACK, stroke=1
+    x=WIDTH - 25, y=HEIGHT + 2, width=22, height=6, fill=None, outline=BLACK, stroke=1
 )
 image_group.append(co2_pointer_shadow)
 
 co2_pointer = Rect(
-    x=WIDTH - 25, y=HEIGHT + 2, width=14, height=5, fill=None, outline=BLACK, stroke=1
+    x=WIDTH - 25, y=HEIGHT + 2, width=22, height=5, fill=None, outline=BLACK, stroke=1
 )
 image_group.append(co2_pointer)
 
