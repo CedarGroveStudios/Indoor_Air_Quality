@@ -16,4 +16,4 @@ Forced calibration is initiated by pressing the _START_ button on the PyBadge/Py
 
 Thank you to @effiksmusic for the German translation.
 
-![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/main/photos_and_graphics/co2_monitor_board_line-up.png)
+![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/main/photos_and_graphics/co2_monitor_board_line-up_v2.png)
