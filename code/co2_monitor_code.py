@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-15 v1.6.9
+# 2021-09-15 v1.7.0
 
 import time
 import board
@@ -33,16 +33,22 @@ else:
 
 board_type = os.uname().machine
 print("Board:", board_type)
-has_battery_mon = False
+has_battery_mon = has_speaker = False
+trend_points = 40
 if ("Pygamer" in board_type) or ("Pybadge" in board_type):
     import air_monitor_buttons.buttons_pybadge as air_monitor_panel
 
+    has_speaker = True
     has_battery_mon = True
     battery_mon = AnalogIn(board.A6)
 elif "PyPortal" in board_type:
     import air_monitor_buttons.buttons_pyportal as air_monitor_panel
+
+    has_speaker = True
 elif "CLUE" in board_type:
     import air_monitor_buttons.buttons_clue as air_monitor_panel
+
+    trend_points = 30  # Adjusted for limited memory
 elif "FunHouse" in board_type:
     import air_monitor_buttons.buttons_funhouse as air_monitor_panel
 else:
@@ -62,7 +68,6 @@ except:
     print("--- NOT CONNECTED ---")
     co2_sensor_exists = False
 
-# co2_sensor_exists = False # ### TEMPORARY SETTING
 
 # Instantiate display, fonts, speaker, and neopixels
 display = board.DISPLAY
@@ -93,9 +98,7 @@ else:
 # ### Helpers ###
 def play_tone(freq=440, duration=0.01):
     """ Play tones through the integral speaker. """
-    if "FunHome" in board_type:
-        pass
-    else:
+    if has_speaker:
         tone(board.A0, freq, duration)
     return
 
@@ -175,6 +178,7 @@ def update_co2_image_frame(blocking=False, wait_time=3):
             co2_trend_chart.append(sensor_co2_norm)  # add latest point
     return sensor_data_valid
 
+
 play_tone(880, 0.1)  # A5
 
 # ### Define the display groups ###
@@ -184,9 +188,7 @@ reference_group = displayio.Group()
 
 # Define co2 trend chart group and points area
 co2_trend_chart = []
-point_width = int((WIDTH - 28) / 40)  # 40 trend points
-if "CLUE" in board_type:
-    point_width = int((WIDTH - 28) / 30)  # 30 trend points
+point_width = int((WIDTH - 28) / trend_points)
 for i in range(0, WIDTH - 28, point_width):
     point = Rect(
         x=(WIDTH - 28) - i,
@@ -263,7 +265,6 @@ if co2_sensor_exists:
         stroke=1,
     )
     reference_group.append(co2_alarm_pointer)
-
     image_group.append(reference_group)
 
 # Define co2 pointer
@@ -341,6 +342,7 @@ co2_value.anchor_point = (0.5, 1.0)
 co2_value.anchored_position = ((WIDTH - 20) // 2, HEIGHT // 2)
 image_group.append(co2_value)
 
+# Add button displayio group if defined by panel class
 if panel.button_display_group:
     image_group.append(panel.button_display_group)
 
@@ -350,21 +352,20 @@ display.show(image_group)
 if co2_sensor_exists:
     scd.reset()  # Reset sensor and set acquisition interval
     scd.measurement_interval = SENSOR_INTERVAL
-# Wait for sensor data and display
-sensor_valid = update_co2_image_frame(blocking=True)
+    # Wait for sensor data and display
+    sensor_valid = update_co2_image_frame(blocking=True)
+else:
+    flash_status(interpret(TRANSLATE, "NO CO2 SENSOR"), 2.0)
 
 play_tone(440, 0.1)  # A4
 play_tone(880, 0.1)  # A5
-
-if not co2_sensor_exists:
-    flash_status(interpret(TRANSLATE, "NO CO2 SENSOR"), 2.0)
 
 # ###--- PRIMARY PROCESS LOOP ---###
 t0 = time.monotonic()  # Reset sensor interval timer
 while True:
     panel.timeout = 1.0  # Set button hold time: long hold
     button_pressed, hold_time = panel.read_buttons()
-    if button_pressed == "calibrate":  # Recalibrate mode selected (start)
+    if button_pressed == "calibrate":  # Recalibrate mode selected
         if hold_time >= 1.0:  # long press
             if co2_sensor_exists:
                 flash_status(interpret(TRANSLATE, "CALIBRATE"), 0.5)
@@ -395,7 +396,7 @@ while True:
                 flash_status("ENGLISH", 0.5)
 
     if time.monotonic() - SENSOR_INTERVAL > t0:
-        # If available, acquire sensor data and update display
+        # Acquire sensor data and update display
         sensor_valid = update_co2_image_frame()
         t0 = time.monotonic()
     else:
