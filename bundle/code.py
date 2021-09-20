@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-15 v1.7.0
+# 2021-09-18 v1.7.0
 
 import time
 import board
@@ -33,24 +33,30 @@ else:
 
 board_type = os.uname().machine
 print("Board:", board_type)
-has_battery_mon = has_speaker = False
-trend_points = 40
 if ("Pygamer" in board_type) or ("Pybadge" in board_type):
     import air_monitor_buttons.buttons_pybadge as air_monitor_panel
 
     has_speaker = True
     has_battery_mon = True
     battery_mon = AnalogIn(board.A6)
+    trend_points = 40
 elif "PyPortal" in board_type:
     import air_monitor_buttons.buttons_pyportal as air_monitor_panel
 
     has_speaker = True
+    has_battery_mon = False
+    trend_points = 40
 elif "CLUE" in board_type:
     import air_monitor_buttons.buttons_clue as air_monitor_panel
 
+    has_speaker = False
+    has_battery_mon = False
     trend_points = 30  # Adjusted for limited memory
 elif "FunHouse" in board_type:
     import air_monitor_buttons.buttons_funhouse as air_monitor_panel
+    has_speaker = False
+    has_battery_mon = False
+    trend_points = 40
 else:
     print("--- Incompatible board ---")
 
