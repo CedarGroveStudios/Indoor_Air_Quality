@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 # co2_monitor_code.py
-# 2021-09-18 v1.7.0
+# 2021-09-20 v1.7.1
+
+# add CircuitPython v7.0.0 compatibility for I2C baud
 
 import time
 import board
@@ -40,30 +42,34 @@ if ("Pygamer" in board_type) or ("Pybadge" in board_type):
     has_battery_mon = True
     battery_mon = AnalogIn(board.A6)
     trend_points = 40
+    i2c_freq = 95000  # Slow I2C bus for SC-30 I2C communication
 elif "PyPortal" in board_type:
     import air_monitor_buttons.buttons_pyportal as air_monitor_panel
 
     has_speaker = True
     has_battery_mon = False
     trend_points = 40
+    i2c_freq = 95000  # Slow I2C bus for SC-30 I2C communication
 elif "CLUE" in board_type:
     import air_monitor_buttons.buttons_clue as air_monitor_panel
 
     has_speaker = False
     has_battery_mon = False
     trend_points = 30  # Adjusted for limited memory
+    i2c_freq = 25000  # Extra slow I2C bus for SC-30 I2C communication
 elif "FunHouse" in board_type:
     import air_monitor_buttons.buttons_funhouse as air_monitor_panel
     has_speaker = False
     has_battery_mon = False
     trend_points = 40
+    i2c_freq = 95000  # Slow I2C bus for SC-30 I2C communication
 else:
     print("--- Incompatible board ---")
 
 panel = air_monitor_panel.Buttons()
 
-# Instantiate extra slow I2C bus frequency for sensors (25KHz)
-i2c = busio.I2C(board.SCL, board.SDA, frequency=25000)
+# Instantiate I2C bus
+i2c = busio.I2C(board.SCL, board.SDA, frequency=i2c_freq)
 
 # Instantiate CO2 sensor
 try:
