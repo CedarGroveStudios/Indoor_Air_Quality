@@ -8,11 +8,11 @@ The Indoor Air Quality Monitor is a portable SCD-30-based ambient CO2 measuremen
 
 The Indoor Air Quality Monitor bundle folder contains all the files and helpers needed for CircuitPython version 6.x.
 
-Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. Besides selecting initial temperature units and display brightness, the configuration file supports language translation.
+Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. The configuration file specifies start-up temperature units, alarm thresholds, and language. Currently, only English and German language translations are supported, but more are planned.
 
-The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the EdgeBadge, PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and CLUE boards without requiring code modification.
+The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the PyBadge, PyGamer, EdgeBadge, PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and CLUE boards without requiring code modification.
 
-Forced calibration is initiated by pressing and holding the _START_ button on the PyBadge/PyGamer/EdgeBadge for one second. Forced calibration is initiated by touching and holding the middle portion of the PyPortal touchscreen or pressing and holding the FunHouse center button. Forced calibration is not supported on the CLUE.
+Forced CO2 sensor calibration is initiated by pressing and holding the _START_ button on the PyBadge/PyGamer/EdgeBadge for one second. Forced calibration is initiated by touching and holding the middle portion of the PyPortal touchscreen or pressing and holding the FunHouse center button. Forced calibration is not supported on the CLUE.
 
 Pressing and holding the PyBadge _SELECT_ button changes temperature units. Touch and hold the lower portion of the PyPortal touchscreen, press and hold the CLUE  _B_ button, or the FunHouse lower button.
 
