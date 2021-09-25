@@ -2,7 +2,8 @@
 
 from air_mon_colors import *
 
-LANGUAGE = "ENGLISH"
+ALT_LANGUAGE = "FRANCAIS"  # DEUTSCH, FRANCAIS, or PIRATE
+TRANSLATE = False  # Start-up with alternate language
 TEMP_UNIT = "F"  # "F" for Fahrenheit, "C" for Celsius
 BRIGHTNESS = 0.50  # 0.0 to 1.0; 0.75 is typical
 SENSOR_INTERVAL = 10  # Interval between measurements (2 to 1800 seconds)

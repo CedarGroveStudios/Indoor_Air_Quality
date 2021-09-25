@@ -22,16 +22,17 @@ from adafruit_display_shapes.rect import Rect
 import adafruit_scd30
 from cedargrove_unit_converter.temperature import celsius_to_fahrenheit
 from cedargrove_unit_converter.air_quality.co2_air_quality import co2_ppm_to_quality
-from cedargrove_unit_converter.air_quality.interpreter.english_to_deutsch import (
-    interpret,
-)
+
 from co2_mon_config import *
 
 SCREEN_TITLE = "Indoor Air Quality"
-if LANGUAGE == "ENGLISH":
-    TRANSLATE = False
-else:
-    TRANSLATE = True
+
+# Import translator for alt language
+exec(
+    "from cedargrove_unit_converter.air_quality.interpreter.english_to_"
+    + ALT_LANGUAGE.lower()
+    + " import interpret"
+)
 
 board_type = os.uname().machine
 print("Board:", board_type)
