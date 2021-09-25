@@ -8,7 +8,7 @@ The Indoor Air Quality Monitor is a portable SCD-30-based ambient CO2 measuremen
 
 The Indoor Air Quality Monitor bundle folder contains all the files and helpers needed for CircuitPython version 6.x.
 
-Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. The configuration file specifies start-up temperature units, alarm thresholds, and language. Currently, only English and German language translations are supported, but more are planned.
+Editable user-specified configuration parameters are stored in the _co2_mon_config.py_ file. The configuration file specifies start-up temperature units, CO2 alarm threshold, and alternate language. Currently, only English, German, and French language translations are supported, but more are planned.
 
 The primary Indoor Air Quality code module detects and adjusts automatically for display resolution including font size (an older version without automatic font sizing is shown in the photo). The code was successfully tested on the PyBadge, PyGamer, EdgeBadge, PyPortal, PyPortal Pynt, PyPortal Titano, FunHouse, and CLUE boards without requiring code modification.
 
@@ -18,6 +18,6 @@ Pressing and holding the PyBadge _SELECT_ button changes temperature units. Touc
 
 The PyBadge _A_ button toggles between languages. To switch languages on the PyPortal, touch and hold the upper portion of the touchscreen. Press and hold the CLUE _A_ button or the FunHouse top button to switch languages.
 
-Thank you to @effiksmusic for the German translation.
+Thank you to @effiksmusic and @DavidGlaude for alternate language translations (German, French). 
 
 ![Image of Module](https://github.com/CedarGroveStudios/Indoor_Air_Quality/blob/main/photos_and_graphics/co2_monitor_board_line-up_v2.png)
